@@ -16,7 +16,7 @@ describe('Testando o backend', () => {
     it('Should create an account', () => {
         cy.request({
             method: 'POST',
-            url: 'https://barrigarest.wcaquino.me/contas',
+            url: '/contas',
             body: {nome: "testando234"},
             headers: { Authorization: `JWT ${token}`}
         }).as('response')
@@ -28,6 +28,24 @@ describe('Testando o backend', () => {
         })
     })
 
+    it('Should update account', () => {
+        cy.request({
+            method: 'GET',
+            url: '/contas',
+            headers: { Authorization: `JWT ${token}` },
+            qs: {
+                nome: 'Conta para alterar'
+            }
+        }).then(res => {
+            cy.request({
+                method: 'PUT',
+                url: `/contas/${res.body[0].id}`,
+                headers: { Authorization: `JWT ${token}` },
+                body: {
+                    nome: "conta alterada via rest"
+                }
 
-
+            })
+        })
+    })
 })
