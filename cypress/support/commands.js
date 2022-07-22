@@ -51,13 +51,20 @@ Cypress.Commands.add('resetarContas', ()=>{
     cy.get(loc.MENU.RESET).click()   
 })
 
-Cypress.Commands.add('getToken', () => {
+Cypress.Commands.add('getToken', (user, passwd) => {
+    let token
     cy.request({
         method: 'POST', 
         url: 'https://barrigarest.wcaquino.me/signin', 
-        body: {email: "maycon", senha: "12345", redirecionar: false}
+        body: {email: user, senha: passwd, redirecionar: false}
     }).its('body.token').should('not.to.be.empty')
-        .then(tkn => {
-            return tkn
-        })
+        .then(tkn => tkn)
+})
+
+Cypress.Commands.add('resetarConta', token =>{
+        cy.request({
+            method: 'GET', 
+            url: 'https://barrigarest.wcaquino.me/reset',
+            headers: { Authorization :  `JWT ${token}`}
+        }).its('status').should('be.equal', 200)
 })

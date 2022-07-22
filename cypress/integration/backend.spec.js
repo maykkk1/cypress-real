@@ -4,22 +4,16 @@ describe('Testando o backend', () => {
     let token
 
     before(()=>{
-        cy.getToken().then(tkn => {
+        cy.getToken('maycon', '12345').then(tkn => {
             token = tkn
         })
     })
 
     beforeEach(()=>{
-        cy.request({
-            method: 'GET',
-            url: 'https://barrigarest.wcaquino.me/reset',
-            headers: { Authorization: `JWT ${token}`}
-        }).then(res => console.log(res))
+        cy.resetarConta(token)
     })
 
-
     it('Should create an account', () => {
-        
         cy.request({
             method: 'POST',
             url: 'https://barrigarest.wcaquino.me/contas',
