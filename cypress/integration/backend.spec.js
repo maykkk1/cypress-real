@@ -20,7 +20,6 @@ describe('Testando o backend', () => {
             body: {nome: "testando234"},
             headers: { Authorization: `JWT ${token}`}
         }).as('response')
-
         cy.get('@response').then(res => {
             expect(res.status).to.be.equal(201)
             expect(res.body).to.have.property('id')
@@ -48,5 +47,20 @@ describe('Testando o backend', () => {
         })
     })
 
-    
+    it('Should not create an account with same name', () => {
+        cy.request({
+            method: 'POST',
+            url: '/contas',
+            body: {nome: "Conta mesmo nome"},
+            headers: { Authorization: `JWT ${token}`},
+            failOnStatusCode: false
+        }).as('response')
+
+
+        cy.get('@response').then(res =>{
+            console.log(res)
+            expect(res.status).to.be.equal(400)
+            expect(res.body.error).to.be.equal('Já existe uma conta com esse nome!')
+        })
+    })
 })
