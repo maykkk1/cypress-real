@@ -28,17 +28,11 @@ describe('Testando o backend', () => {
     })
 
     it('Should update account', () => {
-        cy.request({
-            method: 'GET',
-            url: '/contas',
-            headers: { Authorization: `JWT ${token}` },
-            qs: {
-                nome: 'Conta para alterar'
-            }
-        }).then(res => {
+        cy.getAccountByName( 'Conta para alterar', token)
+            .then(accountId => {
             cy.request({
                 method: 'PUT',
-                url: `/contas/${res.body[0].id}`,
+                url: `/contas/${accountId}`,
                 headers: { Authorization: `JWT ${token}` },
                 body: {
                     nome: "conta alterada via rest"
@@ -58,9 +52,38 @@ describe('Testando o backend', () => {
 
 
         cy.get('@response').then(res =>{
-            console.log(res)
             expect(res.status).to.be.equal(400)
             expect(res.body.error).to.be.equal('Já existe uma conta com esse nome!')
         })
+    })
+
+    it('Should create transaction', () => {
+        cy.getAccountByName('Conta para movimentacoes', token)
+            .then(accountId => {
+                cy.request({
+                    method: 'POST',
+                    url: '/transacoes',
+                    body: {
+                        conta_id: accountId,
+                        data_pagamento: "25/07/2022",
+                        data_transacao: "25/07/2022",
+                        descricao: "teste",
+                        envolvido: "fulano",
+                        status: true,
+                        tipo: "REC",
+                        valor: "1000"
+                    },
+                    headers: { Authorization: `JWT ${token}`}
+                })
+            }).then(res => {
+                expect(res.status).to.be.equal(201)
+                expect(res.body).to.have.property('id')
+                expect(res.body.descricao).to.be.equal('teste')
+                expect(res.body.envolvido).to.be.equal('fulano')
+            })
+    })
+
+    it('Should get balance', () => {
+        
     })
 })

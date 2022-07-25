@@ -68,3 +68,14 @@ Cypress.Commands.add('resetarConta', token =>{
             headers: { Authorization :  `JWT ${token}`}
         }).its('status').should('be.equal', 200)
 })
+
+Cypress.Commands.add('getAccountByName', (AccountName, token) => {
+    cy.request({
+        method: 'GET',
+        url: '/contas',
+        headers: { Authorization: `JWT ${token}` },
+        qs: {
+            nome: AccountName
+        }
+    }).then(res => res.body[0].id)
+})
