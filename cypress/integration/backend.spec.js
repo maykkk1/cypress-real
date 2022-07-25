@@ -83,7 +83,59 @@ describe('Testando o backend', () => {
             })
     })
 
-    it('Should get balance', () => {
-        
+    it.only('Should get balance', () => {
+        cy.request({
+            method: 'GET',
+            url: '/saldo',
+            headers: { Authorization: `JWT ${token}`}
+        }).then(res => {
+            let saldoConta = null
+            res.body.forEach(conta => {
+                if(conta.conta === 'Conta para saldo') {
+                    saldoConta = conta.saldo
+                }
+            })
+            expect(saldoConta).to.be.equal('534.00')
+        })
+
+        cy.request({
+            method: "GET",
+            url: '/transacoes',
+            headers: { Authorization: `JWT ${token}`},
+            qs: {
+                descricao: "Movimentacao 1, calculo saldo"
+            }
+        }).then(res => {
+            cy.request({
+                method: 'PUT',
+                url: `/transacoes/${res.body[0].id}`,
+                headers: { Authorization: `JWT ${token}`},
+                body: {
+                    status: true,
+                    data_transacao: Cypress.moment(res.body[0].data_transacao).format('DD/MM/YYYY'),
+                    data_pagamento: Cypress.moment(res.body[0].data_pagamento).format('DD/MM/YYYY'),
+                    descricao: res.body[0].descricao,
+                    envolvido: res.body[0].envolvido,
+                    conta_id: res.body[0].conta_id,
+                    valor: res.body[0].valor
+                }
+            })
+        })
+
+        cy.request({
+            method: 'GET',
+            url: '/saldo',
+            headers: { Authorization: `JWT ${token}`}
+        }).then(res => {
+            let saldoConta = null
+            res.body.forEach(conta => {
+                if(conta.conta === 'Conta para saldo') {
+                    saldoConta = conta.saldo
+                }
+            })
+            expect(saldoConta).to.be.equal('4034.00')
+        })
+
+
     })
 })
