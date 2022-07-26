@@ -35,6 +35,7 @@ Cypress.Commands.add('clickAlert', (locator, message) => {
 })
 
 Cypress.Commands.add('logar', (usuario, senha, contaExiste) => {
+    cy.visit('https://barrigareact.wcaquino.me/')
     cy.get(loc.LOGIN.USER).type(usuario)
     cy.get(loc.LOGIN.PASSWORD).type(senha)
     cy.get(loc.LOGIN.BTN).click()

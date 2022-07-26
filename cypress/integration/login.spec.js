@@ -2,6 +2,7 @@
 
 describe('Login', () => {
     beforeEach(()=> {
+        
         cy.visit('https://barrigareact.wcaquino.me/')
     })
 
