@@ -46,6 +46,11 @@ Cypress.Commands.add('logar', (usuario, senha, contaExiste) => {
     })
 })
 
+Cypress.Commands.add('acessarMenuContas', () => {
+    cy.get(loc.MENU.SETTINGS).click()
+    cy.get(loc.MENU.CONTAS).click()
+})
+
 
 Cypress.Commands.add('resetarContas', ()=>{
     cy.get(loc.MENU.SETTINGS).click()
